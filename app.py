@@ -14,17 +14,27 @@ from micawber.cache import Cache as OEmbedCache
 from peewee import *
 from playhouse.flask_utils import FlaskDB, get_object_or_404, object_list
 from playhouse.sqlite_ext import *
+from flask_mail import Mail, Message
 
 
 ADMIN_PASSWORD = 'password'
 APP_DIR = os.path.dirname(os.path.realpath(__file__))
 DATABASE = 'sqliteext:///%s' % os.path.join(APP_DIR, 'blog.db')
-DEBUG = False
+DEBUG=True
 SECRET_KEY = 'secret_password'
 SITE_WIDTH = 800
 
 app = Flask(__name__)
+mail = Mail(app)
 app.config.from_object(__name__)
+app.config.update(
+	#EMAIL SETTINGS
+	MAIL_SERVER='smtp.gmail.com',
+	MAIL_PORT=465,
+	MAIL_USE_SSL=True,
+	MAIL_USERNAME = 'your_mail@google.com',
+	MAIL_PASSWORD = 'GooglePasswordHere',
+	)
 flask_db = FlaskDB(app)
 database = flask_db.database
 oembed_providers = bootstrap_basic(OEmbedCache())
@@ -108,6 +118,22 @@ def login_required(fn):
             return fn(*args, **kwargs)
         return redirect(url_for('login', next=request.path))
     return inner
+
+@app.route('/contact/', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        if request.form.get('subject') and request.form.get('message') and request.form.get('your_mail'):
+            msg = Message(
+                body='You have new answer from {0}, {1}'.format(
+                    request.form.get('your_mail'), request.form.get('message')),
+                subject=request.form.get('subject'),
+                sender='you@dgoogle.com',
+                recipients=['vozniak.vol@hotmail.com'])
+            if mail.send(msg):
+                flash('Your message has been sent, I will answer you soon.', 'success')
+        else:
+            flash('All fields are required.', 'danger')
+    return render_template('contact.html')
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():

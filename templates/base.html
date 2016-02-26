@@ -28,6 +28,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('contact') }}">Contact me</a></li>
             {% if session.logged_in %}
               <li><a href="{{ url_for('drafts') }}">Drafts</a></li>
               <li><a href="{{ url_for('create') }}">Create Entry</a></li>
