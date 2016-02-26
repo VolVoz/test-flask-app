@@ -17,24 +17,9 @@ from playhouse.sqlite_ext import *
 from flask_mail import Mail, Message
 
 
-ADMIN_PASSWORD = 'password'
-APP_DIR = os.path.dirname(os.path.realpath(__file__))
-DATABASE = 'sqliteext:///%s' % os.path.join(APP_DIR, 'blog.db')
-DEBUG=False
-SECRET_KEY = 'secret_password'
-SITE_WIDTH = 800
-
 app = Flask(__name__)
 mail = Mail(app)
-app.config.from_object(__name__)
-app.config.update(
-	#EMAIL SETTINGS
-	MAIL_SERVER='smtp.gmail.com',
-	MAIL_PORT=465,
-	MAIL_USE_SSL=True,
-	MAIL_USERNAME = 'your_mail@google.com',
-	MAIL_PASSWORD = 'GooglePasswordHere',
-	)
+app.config.from_pyfile('config.py')
 flask_db = FlaskDB(app)
 database = flask_db.database
 oembed_providers = bootstrap_basic(OEmbedCache())
