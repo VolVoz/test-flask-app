@@ -112,7 +112,7 @@ def contact():
                     request.form.get('your_mail'), request.form.get('message')),
                 subject=request.form.get('subject'),
                 sender='you@dgoogle.com',
-                recipients=['vozniak.vol@hotmail.com'])
+                recipients=['example@mail.com'])
             if mail.send(msg):
                 flash('Your message has been sent, I will answer you soon.', 'success')
         else:
